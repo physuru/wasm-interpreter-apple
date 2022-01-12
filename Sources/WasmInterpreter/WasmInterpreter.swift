@@ -6,10 +6,10 @@ public final class WasmInterpreter {
     private var id: UInt64
     private var idPointer: UnsafeMutableRawPointer
 
-    private var environment: IM3Environment
-    private var runtime: IM3Runtime
-    private var moduleAndBytes: (IM3Module, [UInt8])
-    private var module: IM3Module { moduleAndBytes.0 }
+    public var environment: IM3Environment
+    public var runtime: IM3Runtime
+    public var moduleAndBytes: (IM3Module, [UInt8])
+    public var module: IM3Module { moduleAndBytes.0 }
 
     private var functionCache = [String: IM3Function]()
     private var importedFunctionContexts = [UnsafeMutableRawPointer]()
