@@ -251,6 +251,9 @@ extension WasmInterpreter {
         try args.withCStrings { (cStrings) throws -> Void in
             var mutableCStrings = cStrings
             let size = UnsafeMutablePointer<Int>.allocate(capacity: 1)
+            defer {
+                size.deallocate()
+            }
             let r = wasm3_CallWithArgs(function, UInt32(args.count), &mutableCStrings, size, nil)
             if let result = r {
                 throw WasmInterpreterError.onCallFunction(String(cString: result))
@@ -267,13 +270,18 @@ extension WasmInterpreter {
             var mutableCStrings = cStrings
             let size = UnsafeMutablePointer<Int>.allocate(capacity: 1)
             let output = UnsafeMutablePointer<T>.allocate(capacity: 1)
+            defer {
+                size.deallocate()
+                output.deallocate()
+            }
             let r = wasm3_CallWithArgs(function, UInt32(args.count), &mutableCStrings, size, output)
             if let result = r {
                 throw WasmInterpreterError.onCallFunction(String(cString: result))
             } else if MemoryLayout<T>.size != size.pointee {
                 throw WasmInterpreterError.invalidFunctionReturnType
             } else {
-                return output.pointee
+                let pointee = output.pointee
+                return pointee
             }
         }
     }
